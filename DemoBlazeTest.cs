@@ -120,4 +120,15 @@ public class DemoBlazeTests : IDisposable
         // Optionally, close the alert if needed
         _driver.FindElement(By.CssSelector(".sweet-alert .confirm")).Click();
     }
+    [Fact]
+    public void NavigateToAboutUs() {
+        WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
+        wait.Until(ExpectedConditions.ElementIsVisible(By.LinkText("About us")));
+        _driver.FindElement(By.LinkText("About us")).Click();
+        _driver.FindElement(By.ClassName("modal-content"));
+        wait.Until(ExpectedConditions.ElementIsVisible(By.Id("videoModalLabel")));
+        var title = _driver.FindElement(By.Id("videoModalLabel")).Text;
+        Assert.Equal( "About us",title);
+    }
+    
 }
