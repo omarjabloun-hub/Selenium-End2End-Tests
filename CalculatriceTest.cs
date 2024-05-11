@@ -1,5 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 
 namespace Selenium_E2E_Tests_TP;
 
@@ -52,6 +54,12 @@ public class CalculatorTests : IDisposable
         AssertResult("Résultat : Infinity");
     }
     
+    [Fact]
+    public void TestEmptySecondOperand()
+    {
+        SetupCalculator("10", "+", "");  // Leaving the second operand empty
+        AssertRequiredFieldNotSubmitted("num2");
+    }
     private void SetupCalculator(string num1, string operation, string num2)
     {
         _driver.Navigate().GoToUrl("https://safatelli.github.io/tp-test-logiciel/assets/calc.html");
@@ -66,5 +74,12 @@ public class CalculatorTests : IDisposable
     {
         var result = _driver.FindElement(By.Id("result")).Text;
         Assert.Equal(expected, result);
+    }
+    private void AssertRequiredFieldNotSubmitted(string inputId)
+    {
+        var inputField = _driver.FindElement(By.Id(inputId));
+        string value = inputField.GetAttribute("value");
+        bool isValueEmpty = string.IsNullOrEmpty(value);
+        Assert.True(isValueEmpty, "Please fill out this field.");
     }
 }
