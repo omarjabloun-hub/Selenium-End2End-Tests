@@ -1,6 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using Selenium_E2E_Tests_TP.Data;
 using SeleniumExtras.WaitHelpers;
 
 namespace Selenium_E2E_Tests_TP;
@@ -36,9 +37,9 @@ public class DemoBlazeTests : IDisposable
         var productPrice = _driver.FindElement(By.CssSelector(".card h5")).Text;
         var productDescription = _driver.FindElement(By.CssSelector("#article")).Text;
 
-        Assert.Equal("Samsung galaxy s6", productName);
-        Assert.Equal("$360", productPrice);
-        Assert.Contains("powered by 1.5GHz octa-core Samsung Exynos 7420 processor", productDescription);
+        Assert.Equal(DemoBlazeTestData.ProductName, productName);
+        Assert.Equal(DemoBlazeTestData.ProductPrice, productPrice);
+        Assert.Contains(DemoBlazeTestData.ProductDescription, productDescription);
     }
     
     [Fact]
@@ -49,7 +50,7 @@ public class DemoBlazeTests : IDisposable
         WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
         wait.Until(drv => drv.FindElement(By.ClassName("h-100")).Displayed);
         // Navigate to a product page
-        _driver.FindElement(By.LinkText("Samsung galaxy s6")).Click();
+        _driver.FindElement(By.LinkText(DemoBlazeTestData.ProductName)).Click();
         Console.WriteLine("Navigated to product page");
         wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("a.btn.btn-success.btn-lg")));
         _driver.FindElement(By.CssSelector("a.btn.btn-success.btn-lg")).Click();
@@ -100,12 +101,13 @@ public class DemoBlazeTests : IDisposable
         wait.Until(ExpectedConditions.ElementIsVisible(By.Id("orderModal")));
 
         // Now fill out the form within the modal
-        _driver.FindElement(By.Id("name")).SendKeys("Omar");
-        _driver.FindElement(By.Id("country")).SendKeys("Tunis");
-        _driver.FindElement(By.Id("city")).SendKeys("Tunis");
-        _driver.FindElement(By.Id("card")).SendKeys("0123012301230123");
-        _driver.FindElement(By.Id("month")).SendKeys("3");
-        _driver.FindElement(By.Id("year")).SendKeys("2000");
+        _driver.FindElement(By.Id("name")).SendKeys(DemoBlazeTestData.UserName);
+        _driver.FindElement(By.Id("country")).SendKeys(DemoBlazeTestData.Country);
+        _driver.FindElement(By.Id("city")).SendKeys(DemoBlazeTestData.City);
+        _driver.FindElement(By.Id("card")).SendKeys(DemoBlazeTestData.CardNumber);
+        _driver.FindElement(By.Id("month")).SendKeys(DemoBlazeTestData.Month);
+        _driver.FindElement(By.Id("year")).SendKeys(DemoBlazeTestData.Year);
+        _driver.FindElement(By.CssSelector("#orderModal .btn-primary")).Click();
 
         // Click the primary button to submit the form
         _driver.FindElement(By.CssSelector("#orderModal .btn-primary")).Click();
@@ -113,7 +115,7 @@ public class DemoBlazeTests : IDisposable
         // Verify if the order confirmation is visible or check for confirmation text
         wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector(".sweet-alert")));
         string confirmationText = _driver.FindElement(By.CssSelector(".sweet-alert h2")).Text;
-        Assert.Equal("Thank you for your purchase!", confirmationText);
+        Assert.Equal(DemoBlazeTestData.ExpectedConfirmationMessage, confirmationText);
 
         // Optionally, close the alert if needed
         _driver.FindElement(By.CssSelector(".sweet-alert .confirm")).Click();
